@@ -10,37 +10,44 @@ public class KakaoFailRate2019 {
 
   public int[] solution(int N, int[] stages) {
     int[] answer = {};
+
+    if (stages.length < 1) {
+      return null;
+    }
+
     // 1. TreeMap으로 N + 1만큼 스테이지 도달한 사람 초기화 한다.
     Map<Integer, Integer> stageMap = new TreeMap<>(Collections.reverseOrder());
-    List<Double> failRate = new ArrayList<>();
+    Map<Integer, Integer> challengeMap = new HashMap<>();
+    Map<Integer, Double> failRate = new HashMap<>();
     for (int i = 1; i <= N + 1; i++) {
       stageMap.put(i, 0);
-      failRate.add(0.0);
+      challengeMap.put(i, 0);
+      if (i <= N) failRate.put(i, 0d);
     }
     // 2. stage 별 도달한 사용자를 Map 으로 해당 스테이지에 멈춘 사람을 구한다
     for (int stage : stages) {
-      if (stageMap.containsKey(stage)) {
-        stageMap.put(stage, stageMap.get(stage) + 1);
-      } else {
-        stageMap.put(stage, 1);
+      stageMap.put(stage, stageMap.get(stage) + 1);
+
+      for (int num = 1; num <= stage; num++) {
+        challengeMap.put(num, challengeMap.get(num) + 1);
       }
     }
     // 3. Map 키를 역순으로 뒤집어서 사람 수를 더 해 가면서 실패율도 구한다. 별도 리스트로 저장한다.
-    double clearPeople = 0d;
-    for (Map.Entry<Integer, Integer> entry : stageMap.entrySet()) {
-      clearPeople += entry.getValue();
-      if (entry.getKey() != (N + 1)) {
-        failRate.set(entry.getKey(), clearPeople > 0 ? entry.getValue() / clearPeople : 0.0);
+    for (Integer stageKey : stageMap.keySet()) {
+      if (stageKey <= N) {
+        failRate.put(stageKey,  (double)stageMap.get(stageKey) / (double) challengeMap.get(stageKey));
       }
     }
+    List<Map.Entry<Integer, Double>> failRateList = new ArrayList<>(failRate.entrySet());
+
     // 4. 저장된 리스트를 실패율 역순, 인덱스 번호로 정렬 해서 인덱스 값을 리스트로 저장한다.
-    //	  list.sort((d1, d2) -> {
-    //            int result = Double.compare(d2, d1);  // 값 기준 내림차순(역순)
-    //            if (result == 0) {                    // 값이 같으면
-    //                return list.indexOf(d1) - list.indexOf(d2);  // 인덱스 기준 오름차순
-    //            }
-    //            return result;
-    //        });
+    failRateList.sort((d1, d2) -> {
+      int result = Double.compare(d2.getValue(), d1.getValue());  // 값 기준 내림차순(역순)
+      if (result == 0) {                    // 값이 같으면
+        return d1.getKey() - d2.getKey();  // 인덱스 기준 오름차순
+      }
+      return result;
+    });
     return answer;
   }
 
