@@ -9,7 +9,7 @@ import java.util.*;
 public class KakaoFailRate2019 {
 
   public int[] solution(int N, int[] stages) {
-    int[] answer = {};
+    int[] answer = new int[N];
 
     if (stages.length < 1) {
       return null;
@@ -35,19 +35,30 @@ public class KakaoFailRate2019 {
     // 3. Map 키를 역순으로 뒤집어서 사람 수를 더 해 가면서 실패율도 구한다. 별도 리스트로 저장한다.
     for (Integer stageKey : stageMap.keySet()) {
       if (stageKey <= N) {
-        failRate.put(stageKey,  (double)stageMap.get(stageKey) / (double) challengeMap.get(stageKey));
+        if (challengeMap.get(stageKey) == 0) {
+          failRate.put(stageKey, 0d);
+        } else {
+          failRate.put(
+              stageKey, (double) stageMap.get(stageKey) / (double) challengeMap.get(stageKey));
+        }
       }
     }
     List<Map.Entry<Integer, Double>> failRateList = new ArrayList<>(failRate.entrySet());
 
     // 4. 저장된 리스트를 실패율 역순, 인덱스 번호로 정렬 해서 인덱스 값을 리스트로 저장한다.
-    failRateList.sort((d1, d2) -> {
-      int result = Double.compare(d2.getValue(), d1.getValue());  // 값 기준 내림차순(역순)
-      if (result == 0) {                    // 값이 같으면
-        return d1.getKey() - d2.getKey();  // 인덱스 기준 오름차순
-      }
-      return result;
-    });
+    failRateList.sort(
+        (d1, d2) -> {
+          int result = Double.compare(d2.getValue(), d1.getValue()); // 값 기준 내림차순(역순)
+          if (result == 0) { // 값이 같으면
+            return d1.getKey() - d2.getKey(); // 인덱스 기준 오름차순
+          }
+          return result;
+        });
+    // 실패율이 높은 순으로 정렬된 리스트의 Map 키값의 인덱스를 결과값으로 반환
+    for (int i = 0; i < failRateList.size(); i++) {
+      answer[i] = failRateList.get(i).getKey();
+    }
+
     return answer;
   }
 
