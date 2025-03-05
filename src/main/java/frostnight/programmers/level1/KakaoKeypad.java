@@ -11,13 +11,7 @@ import java.util.NoSuchElementException;
 public class KakaoKeypad {
 
     public String solution(int[] numbers, String hand) {
-        String answer = "";
-        // 1. 키패드 배열 생성
-        // 2. 왼/오 엄지 인덱스 상태, 입력한 손가락 상태
-        // 3. 커맨드 함수 작성
-        // 3-1. 입력한 숫자에 대해서 어떤 손가락움직일지
-        // 3-2. 입력한 숫자와 손가락 인덱스 거리
-        // 4. 숫자에 따라 커맨드 실행
+        // 키패드 배열 생성
         String[][] keyPad = {{"1", "2", "3"},{"4", "5", "6"},{"7", "8", "9"}, {"*", "0", "#"}};
         // 입력한 손가락
         StringBuilder pressFingers = new StringBuilder();
@@ -108,6 +102,7 @@ public class KakaoKeypad {
         KakaoKeypad kakaoKeypad = new KakaoKeypad();
         for (int i = 0; i < numbers.length; i++) {
             String result = kakaoKeypad.solution(numbers[i], hands[i]);
+            System.out.println("result=>" + result);
             if (!result.equals(except[i])) {
                 System.out.println("i = " + i);
                 System.out.println("number[i] = " + Arrays.toString(numbers[i]));
